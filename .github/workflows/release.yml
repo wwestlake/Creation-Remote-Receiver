@@ -119,6 +119,14 @@ jobs:
 
       - name: Build MSI installer
         shell: pwsh
+        # Non-fatal: this app's repo name ("Creation-Remote-Receiver") is
+        # long enough that, combined with GitHub Actions' doubled workspace
+        # path and WiX's own deep staging tree, MSI packaging can hit a
+        # Windows path-length limit that shorter-named suite apps don't.
+        # The ZIP (already staged in the previous step) is a complete
+        # release on its own -- don't fail the whole release over the
+        # installer specifically. Revisit if this keeps happening.
+        continue-on-error: true
         run: |
           $wixBins = @(
             "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin",
