@@ -61,6 +61,18 @@ target_sources(CreationRemoteReceiverApp PRIVATE
     Source/Main.cpp
     Source/MainComponent.cpp
     Source/MainComponent.h
+    Source/RemoteClient.cpp
+    Source/RemoteClient.h
+    Source/RemoteSessionController.cpp
+    Source/RemoteSessionController.h
+    Source/QrCodeComponent.cpp
+    Source/QrCodeComponent.h
+    ThirdParty/qrcodegen/qrcodegen.cpp
+    ThirdParty/qrcodegen/qrcodegen.hpp
+)
+
+target_include_directories(CreationRemoteReceiverApp PRIVATE
+    ThirdParty/qrcodegen
 )
 
 target_compile_definitions(CreationRemoteReceiverApp PRIVATE
