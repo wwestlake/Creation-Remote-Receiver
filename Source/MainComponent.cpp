@@ -89,11 +89,25 @@ void MainComponent::updateLoginUi()
     };
     sessionController->onPairingApproved = [this]
     {
-        statusLabel.setText("Device paired.", juce::dontSendNotification);
+        statusLabel.setText("Device paired -- negotiating a direct connection...", juce::dontSendNotification);
         qrCode.setVisible(false);
         pairingCodeLabel.setVisible(false);
         pairButton.setVisible(true);
         resized();
+
+        webRtcClient.connectSignaling(sessionController->getHostSessionId(), authSession.getSession().token);
+    };
+    webRtcClient.onPeerConnected = [this]
+    {
+        statusLabel.setText("Direct connection established.", juce::dontSendNotification);
+    };
+    webRtcClient.onPeerDisconnected = [this]
+    {
+        statusLabel.setText("Device paired.", juce::dontSendNotification);
+    };
+    webRtcClient.onError = [this](const juce::String& message)
+    {
+        statusLabel.setText("Signaling error: " + message, juce::dontSendNotification);
     };
 
     sessionController->start(authSession.getSession().token);

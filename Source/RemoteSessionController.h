@@ -25,6 +25,8 @@ public:
     // Requests a new pairing code; result arrives via onPairingReady/onPairingFailed.
     void requestPairing();
 
+    juce::String getHostSessionId() const { return hostSessionId; }
+
     std::function<void(juce::String /*presenceState*/)> onCheckedIn;
     std::function<void(juce::String /*message*/)> onCheckInFailed;
     std::function<void(juce::String /*pairingCode*/)> onPairingReady;

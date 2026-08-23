@@ -22,6 +22,42 @@ set(CREATION_SUITE_SHARED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../shared" CACHE P
 
 add_subdirectory("${JUCE_DIR}" juce)
 
+# libdatachannel: WebRTC DataChannel + its own WebSocket client (used for
+# the signaling connection to djehuti's /ws/remote/signaling relay) --
+# fetched via CMake FetchContent, not vcpkg, deliberately. This app has no
+# vcpkg dependency today, and vcpkg's manifest-mode reconciliation is the
+# exact mechanism that once triggered an unwanted full LLVM rebuild
+# elsewhere in this workspace (see the umbrella AGENTS.md's LLVM/vcpkg
+# Build Rule) -- FetchContent keeps this dependency fully isolated from
+# that risk. NO_MEDIA: only DataChannel + signaling are needed, not
+# audio/video RTP. NO_EXAMPLES/NO_TESTS: keep the fetch/build lean.
+include(FetchContent)
+# libdatachannel vendors older third-party submodules (e.g. plog) whose own
+# cmake_minimum_required() predates what this machine's CMake will still
+# accept outright. This is CMake's own suggested workaround, scoped here
+# rather than globally, since it's only needed for this dependency chain.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+# Static, not shared -- libdatachannel's default shared build produced a
+# Debug-config CRT/STL ABI mismatch against JUCE's own compiled objects
+# (LNK2005 duplicate std::vector<std::byte> symbols between
+# datachannel.lib's import thunks and juce_core.obj). Static keeps
+# everything in one link unit built with this project's own compiler
+# settings, which sidesteps that DLL-boundary mismatch.
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(NO_MEDIA ON CACHE BOOL "" FORCE)
+set(NO_EXAMPLES ON CACHE BOOL "" FORCE)
+set(NO_TESTS ON CACHE BOOL "" FORCE)
+if(EXISTS "C:/Program Files/OpenSSL-Win64")
+    set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-Win64" CACHE PATH "" FORCE)
+endif()
+FetchContent_Declare(
+    libdatachannel
+    GIT_REPOSITORY https://github.com/paullouisageneau/libdatachannel.git
+    GIT_TAG v0.22.5
+    GIT_SUBMODULES_RECURSE TRUE
+)
+FetchContent_MakeAvailable(libdatachannel)
+
 # No CEL/Language dependency -- this app has no scripting or domain-intrinsic
 # surface, unlike the creative apps. It only discovers projects and deposits
 # received assets; keep it minimal rather than pulling in the LLVM-backed CEL
@@ -67,6 +103,8 @@ target_sources(CreationRemoteReceiverApp PRIVATE
     Source/RemoteSessionController.h
     Source/QrCodeComponent.cpp
     Source/QrCodeComponent.h
+    Source/WebRTCClient.cpp
+    Source/WebRTCClient.h
     ThirdParty/qrcodegen/qrcodegen.cpp
     ThirdParty/qrcodegen/qrcodegen.hpp
 )
@@ -89,6 +127,7 @@ target_link_libraries(CreationRemoteReceiverApp PRIVATE
     creation_suite_ui
     creation_suite_ui_assets
     creation_suite_interop
+    LibDataChannel::LibDataChannel
     juce::juce_gui_extra
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
