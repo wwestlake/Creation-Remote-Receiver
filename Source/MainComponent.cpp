@@ -109,6 +109,11 @@ void MainComponent::updateLoginUi()
     {
         statusLabel.setText("Signaling error: " + message, juce::dontSendNotification);
     };
+    webRtcClient.onAssetReceived = [this](const juce::String& displayName)
+    {
+        statusLabel.setText("Received: " + displayName, juce::dontSendNotification);
+        refreshProjectCount();
+    };
 
     sessionController->start(authSession.getSession().token);
     refreshProjectCount(); // seeds sessionController's project list before the first heartbeat

@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include <rtc/rtc.hpp>
 #include <memory>
+#include <creation/suite/SuiteSettings.h>
 
 // Connects to djehuti's /ws/remote/signaling relay as the "host" role,
 // negotiates a direct P2P connection to whichever phone is signaling for
@@ -32,14 +33,32 @@ public:
     std::function<void()> onPeerConnected;
     std::function<void()> onPeerDisconnected;
     std::function<void(const juce::String& /*message*/)> onError;
+    std::function<void(const juce::String& /*displayName*/)> onAssetReceived;
 
 private:
     void handleSignalingMessage(const juce::String& message);
     void createPeerConnection();
 
+    // Protocol doc §5: a JSON text message (the asset header) is always
+    // immediately followed by one binary message (the payload, or one chunk
+    // of it). onDataChannelMessage demuxes by variant type and routes to
+    // whichever of these two is expecting it next.
+    void onDataChannelMessage(rtc::message_variant data);
+    void handleIncomingHeader(const juce::var& header);
+    void handleIncomingChunk(const void* data, size_t size);
+    void depositAsset();
+
     std::shared_ptr<rtc::WebSocket> signalingSocket;
     std::shared_ptr<rtc::PeerConnection> peerConnection;
     std::shared_ptr<rtc::DataChannel> dataChannel;
+
+    creation::suite::SuiteSettingsStore suiteSettingsStore;
+
+    // Single in-flight receive state -- the protocol is discrete
+    // capture-then-send, never concurrent overlapping transfers, so there is
+    // only ever one asset (or one chunk of one asset) being reassembled.
+    juce::var pendingHeader;
+    juce::MemoryBlock receiveBuffer;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WebRTCClient)
 };
