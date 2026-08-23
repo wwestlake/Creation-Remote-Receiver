@@ -97,6 +97,7 @@ void MainComponent::updateLoginUi()
     };
 
     sessionController->start(authSession.getSession().token);
+    refreshProjectCount(); // seeds sessionController's project list before the first heartbeat
 }
 
 void MainComponent::beginPairing()
@@ -124,10 +125,21 @@ void MainComponent::refreshProjectCount()
     const auto projects = creation::interop::ProjectRegistry::discoverProjects(settings, registryError);
 
     if (registryError.isNotEmpty())
+    {
         projectCountLabel.setText("Project discovery: " + registryError, juce::dontSendNotification);
-    else
-        projectCountLabel.setText(juce::String(projects.size()) + " project(s) available to receive into",
-                                   juce::dontSendNotification);
+        return;
+    }
+
+    projectCountLabel.setText(juce::String(projects.size()) + " project(s) available to receive into",
+                               juce::dontSendNotification);
+
+    if (sessionController != nullptr)
+    {
+        juce::Array<RemoteClient::ProjectSummary> summaries;
+        for (const auto& project : projects)
+            summaries.add({ project.projectId, project.manifest.projectName });
+        sessionController->setProjects(std::move(summaries));
+    }
 }
 
 void MainComponent::paint(juce::Graphics& g)

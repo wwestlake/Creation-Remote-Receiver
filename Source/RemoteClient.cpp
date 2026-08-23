@@ -38,8 +38,18 @@ juce::var RemoteClient::getJson(const juce::String& path, int& statusCode) const
 }
 
 RemoteClient::CheckInResult RemoteClient::checkIn(const juce::String& deviceId, const juce::String& deviceName,
-                                                   const juce::String& appVersion) const
+                                                   const juce::String& appVersion,
+                                                   const juce::Array<ProjectSummary>& projects) const
 {
+    juce::Array<juce::var> projectsJson;
+    for (const auto& project : projects)
+    {
+        auto projectObject = juce::DynamicObject::Ptr(new juce::DynamicObject);
+        projectObject->setProperty("projectId", project.projectId);
+        projectObject->setProperty("displayName", project.displayName);
+        projectsJson.add(juce::var(projectObject.get()));
+    }
+
     auto bodyObject = juce::DynamicObject::Ptr(new juce::DynamicObject);
     bodyObject->setProperty("productSlug", "creation-remote-receiver");
     bodyObject->setProperty("appId", "com.lagdaemon.creationremotereceiver");
@@ -49,6 +59,7 @@ RemoteClient::CheckInResult RemoteClient::checkIn(const juce::String& deviceId, 
     bodyObject->setProperty("agentAvailable", true);
     bodyObject->setProperty("controlPanelAvailable", false);
     bodyObject->setProperty("capabilities", juce::Array<juce::var>());
+    bodyObject->setProperty("projects", projectsJson);
 
     int statusCode = 0;
     const auto response = postJson("/api/remote/host-sessions/check-in", juce::var(bodyObject.get()), statusCode);

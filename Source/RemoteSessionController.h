@@ -14,8 +14,13 @@ public:
     ~RemoteSessionController() override;
 
     // Starts the background thread: check in, then wait for requestPairing().
+    // projects is read once at construction of the check-in payload each
+    // heartbeat -- MainComponent refreshes it by calling setProjects() before
+    // the next heartbeat needs current data (project discovery doesn't
+    // change often enough to need finer-grained invalidation than that).
     void start(juce::String bearerToken);
     void stop();
+    void setProjects(juce::Array<RemoteClient::ProjectSummary> newProjects);
 
     // Requests a new pairing code; result arrives via onPairingReady/onPairingFailed.
     void requestPairing();
@@ -34,4 +39,7 @@ private:
     juce::String pendingPairingId;
     std::atomic<bool> pairingRequested { false };
     juce::WaitableEvent wakeEvent;
+
+    juce::CriticalSection projectsLock;
+    juce::Array<RemoteClient::ProjectSummary> projects;
 };

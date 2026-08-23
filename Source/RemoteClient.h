@@ -33,10 +33,16 @@ public:
         juce::String errorMessage;
     };
 
+    struct ProjectSummary
+    {
+        juce::String projectId;
+        juce::String displayName;
+    };
+
     explicit RemoteClient(juce::String bearerToken);
 
     CheckInResult checkIn(const juce::String& deviceId, const juce::String& deviceName,
-                          const juce::String& appVersion) const;
+                          const juce::String& appVersion, const juce::Array<ProjectSummary>& projects) const;
     PairingResult createPairing(const juce::String& hostSessionId) const;
     PairingStatusResult getPairingStatus(const juce::String& pairingId) const;
 

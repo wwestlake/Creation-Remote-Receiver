@@ -34,6 +34,12 @@ void RemoteSessionController::requestPairing()
     wakeEvent.signal();
 }
 
+void RemoteSessionController::setProjects(juce::Array<RemoteClient::ProjectSummary> newProjects)
+{
+    juce::ScopedLock lock(projectsLock);
+    projects = std::move(newProjects);
+}
+
 void RemoteSessionController::run()
 {
     const RemoteClient client(bearerToken);
@@ -41,7 +47,12 @@ void RemoteSessionController::run()
 
     auto checkIn = [&]() -> bool
     {
-        const auto result = client.checkIn(deviceId, deviceName(), "0.0.1");
+        juce::Array<RemoteClient::ProjectSummary> currentProjects;
+        {
+            juce::ScopedLock lock(projectsLock);
+            currentProjects = projects;
+        }
+        const auto result = client.checkIn(deviceId, deviceName(), "0.0.1", currentProjects);
         if (threadShouldExit())
             return false;
 
