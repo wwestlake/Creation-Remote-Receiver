@@ -221,10 +221,10 @@ void WebRTCClient::depositAsset()
     options.kind = kind == "audio" ? creation::assets::AssetKind::audio : creation::assets::AssetKind::binary;
     options.displayName = sessionText.isNotEmpty() ? sessionText : logicalPath.fromLastOccurrenceOf("/", false, false);
     options.logicalPath = logicalPath;
-    options.category = "Creation Remote";
+    options.category = "Djehuti Remote";
     options.description = sessionText;
     options.mediaType = mediaType;
-    options.sourceApp = "Creation Remote";
+    options.sourceApp = "Djehuti Remote";
     options.sourceTool = "Djehuti Remote Receiver";
 
     creation::assets::AssetDescriptor descriptor;

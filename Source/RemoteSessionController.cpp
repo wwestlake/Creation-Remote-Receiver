@@ -8,7 +8,7 @@ juce::String deviceName()
 }
 }
 
-RemoteSessionController::RemoteSessionController() : juce::Thread("Creation Remote Session") {}
+RemoteSessionController::RemoteSessionController() : juce::Thread("Djehuti Remote Session") {}
 
 RemoteSessionController::~RemoteSessionController()
 {
