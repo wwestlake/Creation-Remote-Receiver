@@ -58,9 +58,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(libdatachannel)
 
-# No CEL/Language dependency -- this app has no scripting or domain-intrinsic
+# No FRust/Language dependency -- this app has no scripting or domain-intrinsic
 # surface, unlike the creative apps. It only discovers projects and deposits
-# received assets; keep it minimal rather than pulling in the LLVM-backed CEL
+# received assets; keep it minimal rather than pulling in the LLVM-backed FRust
 # stack for a domain it doesn't have.
 add_subdirectory("${CREATION_SUITE_SHARED_DIR}/AssetSystem"
                  "${CMAKE_CURRENT_BINARY_DIR}/CreationSuiteSharedAssetSystem")
