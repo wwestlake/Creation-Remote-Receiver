@@ -225,7 +225,7 @@ void WebRTCClient::depositAsset()
     options.description = sessionText;
     options.mediaType = mediaType;
     options.sourceApp = "Creation Remote";
-    options.sourceTool = "Creation Remote Receiver";
+    options.sourceTool = "Djehuti Remote Receiver";
 
     creation::assets::AssetDescriptor descriptor;
     juce::String depositError;

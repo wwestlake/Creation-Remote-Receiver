@@ -3,7 +3,7 @@
 
 MainComponent::MainComponent()
 {
-    titleLabel.setText("Creation Remote Receiver", juce::dontSendNotification);
+    titleLabel.setText("Djehuti Remote Receiver", juce::dontSendNotification);
     titleLabel.setFont(juce::FontOptions(22.0f, juce::Font::bold));
     titleLabel.setJustificationType(juce::Justification::centredLeft);
     addAndMakeVisible(titleLabel);

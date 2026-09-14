@@ -8,7 +8,7 @@ class CreationRemoteReceiverApplication final : public creation::ui::SuiteJUCEAp
 public:
     CreationRemoteReceiverApplication() : SuiteJUCEApplication(creation::ui::SuiteLogoId::remote) {}
 
-    const juce::String getApplicationName() override { return "Creation Remote Receiver"; }
+    const juce::String getApplicationName() override { return "Djehuti Remote Receiver"; }
     const juce::String getApplicationVersion() override { return "0.0.1"; }
     bool moreThanOneInstanceAllowed() override { return false; }
 
