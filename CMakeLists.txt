@@ -74,7 +74,7 @@ add_subdirectory("${CREATION_SUITE_SHARED_DIR}/Interop"
                  "${CMAKE_CURRENT_BINARY_DIR}/CreationSuiteSharedInterop")
 
 juce_add_gui_app(CreationRemoteReceiverApp
-    PRODUCT_NAME "Djehuti Remote Receiver"
+    PRODUCT_NAME "DjehutiRemoteReceiver"
     COMPANY_NAME "LagDaemon Software"
     BUNDLE_ID "com.lagdaemon.creationremotereceiver"
     ICON_BIG "${CREATION_SUITE_SHARED_DIR}/UI/assets/creation_suite.png"
@@ -141,17 +141,17 @@ install(TARGETS CreationRemoteReceiverApp
 )
 install(FILES README.md LICENSE DESTINATION .)
 
-set(CPACK_PACKAGE_NAME "Djehuti Remote Receiver")
+set(CPACK_PACKAGE_NAME "DjehutiRemoteReceiver")
 set(CPACK_PACKAGE_VENDOR "LagDaemon Software")
 set(CPACK_PACKAGE_CONTACT "LagDaemon Software")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Djehuti Remote Receiver")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "DjehutiRemoteReceiver")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_FILE_NAME "creation-remote-receiver-${CPACK_PACKAGE_VERSION}-win64")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "Djehuti Remote Receiver")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "DjehutiRemoteReceiver")
 set(CPACK_GENERATOR "ZIP;WIX")
-set(CPACK_WIX_PROGRAM_MENU_FOLDER "Djehuti Remote Receiver")
-set(CPACK_PACKAGE_EXECUTABLES "Djehuti Remote Receiver" "Djehuti Remote Receiver")
-set(CPACK_CREATE_DESKTOP_LINKS "Djehuti Remote Receiver")
+set(CPACK_WIX_PROGRAM_MENU_FOLDER "DjehutiRemoteReceiver")
+set(CPACK_PACKAGE_EXECUTABLES "DjehutiRemoteReceiver" "Djehuti Remote Receiver")
+set(CPACK_CREATE_DESKTOP_LINKS "DjehutiRemoteReceiver")
 
 include(CPack)
 
@@ -160,3 +160,6 @@ add_custom_command(TARGET CreationRemoteReceiverApp POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:CreationRemoteReceiverApp>" "D:/CreationSuite-Workspaces/gemini-$<LOWER_CASE:$<CONFIG>>-bin/"
     COMMENT "Copying CreationRemoteReceiverApp to the shared gemini bin directory"
 )
+
+# Auto-generated output name overrides
+set_target_properties(CreationRemoteReceiverApp PROPERTIES OUTPUT_NAME "DjehutiRemoteReceiverApp")
